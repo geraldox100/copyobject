@@ -1,31 +1,37 @@
 package br.com.geraldoferraz.copyobject;
 
+import static br.com.geraldoferraz.copyobject.util.ValidationUtil.argumentValidation;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-
-import static br.com.geraldoferraz.copyobjec.utilt.ValidationUtil.argumentValidation;
 
 ;
 
 public class Copier {
 
 	private Object objectToCopy;
+	String[] tipos = { "java.lang.Integer", "", "java.lang.Short", "java.lang.Character", "java.lang.Long", "java.lang.Float", "java.lang.Double", "java.lang.Boolean" };
 
-	public Copier fromAnnotedObject(Object objectToCopy) {
+	public Copier from(Object objectToCopy) {
 
 		argumentValidation(objectToCopy);
-		checkIfClassHasAnnotation(objectToCopy);
 
 		this.objectToCopy = objectToCopy;
 		return this;
 	}
-
+	
 	@SuppressWarnings("unchecked")
 	public <T> T doCopy() {
+		checkIfClassHasAnnotation(objectToCopy);
+		Class<T> classe = (Class<T>) objectToCopy.getClass().getAnnotation(DestinationClass.class).classe();
+		return doCopy(classe);
+	}
 
+	
+	public <T> T doCopy(Class<T> to) {
 		try {
-
-			T destination = (T) objectToCopy.getClass().getAnnotation(DestinationClass.class).classe().newInstance();
+			T destination = to.newInstance();
+			
 			Field[] objectFields = objectToCopy.getClass().getDeclaredFields();
 
 			for (Field field : objectFields) {
@@ -36,17 +42,11 @@ public class Copier {
 				}
 			}
 			return destination;
-		} catch (IllegalAccessException e) {
-			throw new RuntimeException(e);
-		} catch (SecurityException e) {
-			throw new RuntimeException(e);
-		} catch (NoSuchFieldException e) {
-			throw new RuntimeException(e);
-		} catch (InstantiationException e) {
+		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
-	
+
 	private boolean checkIfFieldHasAnnotation(Field field) {
 
 		return field.isAnnotationPresent(DestinationColumn.class) || field.isAnnotationPresent(DestinationColumns.class);
@@ -165,7 +165,7 @@ public class Copier {
 		}
 	}
 
-	String[] tipos = { "java.lang.Integer", "", "java.lang.Short", "java.lang.Character", "java.lang.Long", "java.lang.Float", "java.lang.Double", "java.lang.Boolean" };
+	
 
 	private boolean notWrapper(Class<?> type) {
 
@@ -217,5 +217,7 @@ public class Copier {
 			num2 = num1-num2;
 		}
 	}
+
+	
 
 }

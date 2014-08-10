@@ -2,8 +2,6 @@ package br.com.geraldoferraz.copyobject.util;
 
 import org.junit.Test;
 
-import br.com.geraldoferraz.copyobjec.utilt.ValidationUtil;
-
 public class ValidationUtilTest {
 
 	@Test(expected = IllegalArgumentException.class)

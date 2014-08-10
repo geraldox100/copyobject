@@ -1,4 +1,4 @@
-package br.com.geraldoferraz.copyobjec.utilt;
+package br.com.geraldoferraz.copyobject.util;
 
 public class ValidationUtil {
 

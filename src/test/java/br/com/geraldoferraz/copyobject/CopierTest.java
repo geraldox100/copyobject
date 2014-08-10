@@ -30,20 +30,19 @@ public class CopierTest {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void whenPassingNullToFromAnnotedObject() {
-		copier.fromAnnotedObject(null);
+		copier.from(null);
 	}
 
 	@Test(expected = RuntimeException.class)
 	public void testParseSemAnnotacao() {
-
-		copier.fromAnnotedObject(new NoAnnotationSource("BB", "123321"));
+		copier.from(new NoAnnotationSource("BB", "123321")).doCopy();
 	}
 
 	@Test
 	public void testParseAtributosComMesmoNome() {
 
 		ClassAnnotationSource de = new ClassAnnotationSource("BB", "123321", "M");
-		Destiny para = copier.fromAnnotedObject(de).doCopy();
+		Destiny para = copier.from(de).doCopy();
 
 		assertEquals("BB", para.getFirst());
 		assertEquals("123321", para.getSecond());
@@ -54,7 +53,7 @@ public class CopierTest {
 	public void testParseAtributosComAnnotacaoDefault() {
 
 		FieldAnnotationSource de = new FieldAnnotationSource("BB", "123321", "M");
-		Destiny para = copier.fromAnnotedObject(de).doCopy();
+		Destiny para = copier.from(de).doCopy();
 
 		assertEquals("BB", para.getFirst());
 		assertEquals("123321", para.getSecond());
@@ -65,7 +64,7 @@ public class CopierTest {
 	public void testParseAtributosComAnnotacaoParaPreenchido() {
 
 		InvertedFieldsSource de = new InvertedFieldsSource("BB", "123321", "M");
-		Destiny para = copier.fromAnnotedObject(de).doCopy();
+		Destiny para = copier.from(de).doCopy();
 
 		assertEquals("123321", para.getFirst());
 		assertEquals("BB", para.getSecond());
@@ -76,7 +75,7 @@ public class CopierTest {
 	public void testParseComObjetosInner() {
 
 		InnerObjectSource de = new InnerObjectSource(new NoAnnotationSource("BB", "123321"));
-		DestinyInnerObject para = copier.fromAnnotedObject(de).doCopy();
+		DestinyInnerObject para = copier.from(de).doCopy();
 
 		assertEquals("BB", para.getObject().getFirst());
 	}
@@ -85,7 +84,7 @@ public class CopierTest {
 	public void testParseComObjetosInnerEVariosAtributos() {
 
 		InnerObjectMultipleObjectFieldsToObjectFields de = new InnerObjectMultipleObjectFieldsToObjectFields(new NoAnnotationSource("BB", "123321"));
-		DestinyInnerObject para = copier.fromAnnotedObject(de).doCopy();
+		DestinyInnerObject para = copier.from(de).doCopy();
 		assertEquals("BB", para.getObject().getFirst());
 		assertEquals("123321", para.getObject().getSecond());
 	}
@@ -94,7 +93,7 @@ public class CopierTest {
 	public void testParseComObjetosDeInnerEParaOuter() {
 
 		InnerObjectMultipleObjectFieldsToFields de = new InnerObjectMultipleObjectFieldsToFields(new NoAnnotationSource("BB", "123321"));
-		Destiny para = copier.fromAnnotedObject(de).doCopy();
+		Destiny para = copier.from(de).doCopy();
 		assertEquals("BB", para.getFirst());
 		assertEquals("123321", para.getSecond());
 	}
@@ -103,9 +102,20 @@ public class CopierTest {
 	public void testParseComObjetosParaInnerEDeOuter() {
 
 		InnerObjectMultipleFieldsToObjectFields de = new InnerObjectMultipleFieldsToObjectFields("BB", "123321");
-		DestinyInnerObject para = copier.fromAnnotedObject(de).doCopy();
+		DestinyInnerObject para = copier.from(de).doCopy();
 		assertEquals("BB", para.getObject().getFirst());
 		assertEquals("123321", para.getObject().getSecond());
+	}
+	
+	@Test
+	public void testParseObjetoSimples() {
+		
+		ClassAnnotationSource de = new ClassAnnotationSource("BB", "123321",null);
+		ClassAnnotationSource para = copier.from(de).doCopy(ClassAnnotationSource.class);
+		
+		assertEquals("BB", para.getFirst());
+		assertEquals("123321", para.getSecond());
+		assertEquals(null, para.getThird());
 	}
 
 }
